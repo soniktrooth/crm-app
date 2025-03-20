@@ -1,66 +1,193 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CRM Contact Module
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Architecture Overview
 
-## About Laravel
+This project implements a Contact management module for a CRM system using Laravel 11 and React. The architecture follows these key principles:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Backend
+- **Modular Structure**: The code is organized in a modular monolith pattern under `app/Modules`
+- **Domain-Driven Design**: Uses DTOs, Services, and Actions to encapsulate business logic
+- **Strong Typing**: Utilizes PHP 8.2+ features with strict typing
+- **Command Pattern**: Implements both API and CLI interfaces using shared business logic
+- **Validation**: Custom validators for E164 phone numbers and email formats
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Frontend
+- **React + TypeScript**: For type safety and better developer experience
+- **React Query**: For efficient server state management
+- **Mantine UI**: For rapid development of a professional UI
+- **Modular Components**: Component-based architecture for reusability
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Future Improvements
+Given more time, these areas could be enhanced:
+- Implement proper event sourcing for contact actions
+- Add more comprehensive error handling
+- Implement proper phone number formatting/validation library
+- Add pagination for contact searches
+- Implement proper authentication/authorization
+- Add more comprehensive test coverage
+- Add proper logging and monitoring
 
-## Learning Laravel
+## Setup Instructions
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- Node.js 18+ and npm
+- MySQL/PostgreSQL
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Installation Steps
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clone the repository and install PHP dependencies:
+```bash
+git clone <your-repo-url>
+cd crm-test
+composer install
+```
 
-## Laravel Sponsors
+2. Set up environment:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Configure your database in `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=crm_test
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-### Premium Partners
+4. Run migrations:
+```bash
+php artisan migrate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+5. Install frontend dependencies:
+```bash
+npm install
+```
 
-## Contributing
+### Running the Application
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Start the Laravel development server:
+```bash
+php artisan serve
+```
 
-## Code of Conduct
+2. In a separate terminal, start the Vite development server:
+```bash
+npm run dev
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The application will be available at:
+- Frontend: http://localhost:5173
+- API: http://localhost:8000/api
 
-## Security Vulnerabilities
+### Using the CLI Interface
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The contact management CLI is available through artisan commands:
 
-## License
+```bash
+# Create or update a contact
+php artisan contacts upsert --name="John Doe" --phone="+61412345678" --email="john@example.com"
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Search for contacts
+php artisan contacts search --query="john"
+
+# Show a specific contact
+php artisan contacts show --id=1
+
+# Delete a contact
+php artisan contacts delete --id=1
+
+# Simulate a call
+php artisan contacts call --id=1
+```
+
+### API Endpoints
+
+Test the API using curl or Postman:
+
+1. Create/Update Contact:
+```bash
+curl -X POST http://localhost:8000/api/contacts \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","phone":"+61412345678","email":"john@example.com"}'
+```
+
+2. Get Contact:
+```bash
+curl http://localhost:8000/api/contacts/1
+```
+
+3. Search Contacts:
+```bash
+curl http://localhost:8000/api/contacts/search?q=john&type=name
+```
+
+4. Delete Contact:
+```bash
+curl -X DELETE http://localhost:8000/api/contacts/1
+```
+
+5. Simulate Call:
+```bash
+curl -X POST http://localhost:8000/api/contacts/1/call
+```
+
+### Running Tests
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+Run specific test files:
+```bash
+php artisan test --filter=ContactControllerTest
+```
+
+### Development Notes
+
+- The frontend is built with React + TypeScript
+- API validation errors will be returned in JSON format
+- Phone numbers must be in E164 format (+61 or +64 prefix)
+- Search supports filtering by name, phone, or email domain
+
+### Troubleshooting
+
+1. If you get database connection errors:
+   - Verify your database credentials in `.env`
+   - Ensure your database server is running
+   - Create the database if it doesn't exist
+
+2. If the frontend doesn't load:
+   - Check if Node.js and npm are installed
+   - Clear your npm cache: `npm cache clean --force`
+   - Delete node_modules and reinstall: `rm -rf node_modules && npm install`
+
+3. If you get permission errors:
+   - Ensure storage and bootstrap/cache directories are writable:
+     ```bash
+     chmod -R 777 storage bootstrap/cache
+     ```
+
+### Additional Commands
+
+- Clear application cache:
+  ```bash
+  php artisan cache:clear
+  ```
+
+- Reset database and re-run migrations:
+  ```bash
+  php artisan migrate:fresh
+  ```
+
+- Seed database with test data (if needed):
+  ```bash
+  php artisan db:seed
+  ```
